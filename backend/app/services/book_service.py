@@ -58,6 +58,8 @@ def transform_book(book: dict):
         id=book["key"].replace("/works/", ""),
         title=book["title"],
         authors=book.get("author_name", []),
+        description=None,
+        subjects=book.get("subject", []),
         first_publish_year=book.get("first_publish_year"),
         cover_id=book.get("cover_i")
-    )
+        )
