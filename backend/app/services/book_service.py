@@ -16,7 +16,7 @@ async def search_open_library(query: str, limit: int):
             response = await client.get(
                 url,
                 params=params,
-                timeout=0.000001
+                timeout=10.0
             )
         response.raise_for_status()
     except httpx.TimeoutException:

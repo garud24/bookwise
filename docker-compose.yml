@@ -1,0 +1,17 @@
+services:
+  db:
+    image: pgvector/pgvector:pg17
+
+    environment:
+      POSTGRES_DB: bookwise
+      POSTGRES_USER: bookwise
+      POSTGRES_PASSWORD: bookwise
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
