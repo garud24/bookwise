@@ -5,6 +5,8 @@ from app.services.book_service import search_open_library
 from app.db.database import get_db
 from app.services.semantic_search_service import semantic_search
 from app.services.book_ingestion_service import ingest_and_process_books
+from app.schemas.search import RerankResponse
+from app.services.reranking_service import rerank_books
 
 router = APIRouter()
 
@@ -44,4 +46,19 @@ async def ingest_books(
         db,
         request.query,
         request.max_results
-    )    
+    )   
+
+@router.post(
+    "/recommend",
+    response_model=RerankResponse
+)
+async def recommend_books(
+    request: BookSearchRequest,
+    db: Session = Depends(get_db)
+):
+    return await rerank_books(
+        db=db,
+        query=request.query,
+        candidate_limit=10,
+        result_limit=request.max_results
+    )     

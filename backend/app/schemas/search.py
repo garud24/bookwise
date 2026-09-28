@@ -35,4 +35,15 @@ class BatchIngestionResponse(BaseModel):
     found: int
     processed: int
     failed: int
-    failures: list[BatchFailure]       
+    failures: list[BatchFailure]   
+
+class RerankedBook(BaseModel):
+    id: str
+    title: str
+    score: float
+    reason: str
+
+
+class RerankResponse(BaseModel):
+    query: str
+    recommendations: list[RerankedBook]        
