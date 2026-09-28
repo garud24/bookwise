@@ -31,6 +31,7 @@ async def semantic_search(
             authors=book.authors,
             description=book.description,
             subjects=book.subjects,
+            cover_id=book.cover_id,
             distance=distance
         )
 

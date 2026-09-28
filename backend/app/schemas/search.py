@@ -16,8 +16,8 @@ class SemanticSearchResult(BaseModel):
     authors: list[str]
     description: str | None = None
     subjects: list[str]
+    cover_id: int | None = None
     distance: float
-
 
 class SemanticSearchResponse(BaseModel):
     query: str
@@ -40,6 +40,9 @@ class BatchIngestionResponse(BaseModel):
 class RerankedBook(BaseModel):
     id: str
     title: str
+    authors: list[str]
+    description: str | None = None
+    cover_id: int | None = None
     score: float
     reason: str
 
@@ -47,3 +50,14 @@ class RerankedBook(BaseModel):
 class RerankResponse(BaseModel):
     query: str
     recommendations: list[RerankedBook]        
+
+class LLMRerankedBook(BaseModel):
+    id: str
+    title: str
+    score: float
+    reason: str
+
+
+class LLMRerankResponse(BaseModel):
+    query: str
+    recommendations: list[LLMRerankedBook]    

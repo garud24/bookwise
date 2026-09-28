@@ -1,6 +1,6 @@
 import json
 import httpx
-from app.schemas.search import RerankedBook, RerankResponse
+from app.schemas.search import RerankedBook, RerankResponse, LLMRerankResponse
 from app.services.semantic_search_service import semantic_search
 from sqlalchemy.orm import Session
 
@@ -141,4 +141,34 @@ Return JSON in this exact structure:
 
     parsed = json.loads(content)
 
-    return RerankResponse.model_validate(parsed)
+    llm_response = LLMRerankResponse.model_validate(parsed)
+    
+    candidate_lookup = {
+        candidate.id: candidate
+        for candidate in search_response.results
+    }
+    
+    recommendations = []
+    
+    for recommendation in llm_response.recommendations:
+        candidate = candidate_lookup.get(recommendation.id)
+    
+        if not candidate:
+            continue
+        
+        recommendations.append(
+            RerankedBook(
+                id=candidate.id,
+                title=candidate.title,
+                authors=candidate.authors,
+                description=candidate.description,
+                cover_id=candidate.cover_id,
+                score=recommendation.score,
+                reason=recommendation.reason
+            )
+        )
+
+    return RerankResponse(
+        query=query,
+        recommendations=recommendations
+    )

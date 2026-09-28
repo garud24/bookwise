@@ -4,6 +4,9 @@ import "./App.css";
 interface Recommendation {
   id: string;
   title: string;
+  authors: string[];
+  description: string | null;
+  cover_id: number | null;
   score: number;
   reason: string;
 }
@@ -18,6 +21,14 @@ function App() {
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const getCoverUrl = (coverId: number | null) => {
+    if (!coverId) {
+      return null;
+    }
+
+    return `https://covers.openlibrary.org/b/id/${coverId}-M.jpg`;
+  };
 
   const discoverBooks = async () => {
     if (!query.trim()) {
@@ -40,7 +51,7 @@ function App() {
             query,
             max_results: 5,
           }),
-        }
+        },
       );
 
       if (!response.ok) {
@@ -66,8 +77,7 @@ function App() {
         <h1>Find your next great read.</h1>
 
         <p className="subtitle">
-          Describe what you're in the mood for and let AI find books
-          that match.
+          Describe what you're in the mood for and let AI find books that match.
         </p>
 
         <div className="search-box">
@@ -78,10 +88,7 @@ function App() {
             rows={3}
           />
 
-          <button
-            onClick={discoverBooks}
-            disabled={loading}
-          >
+          <button onClick={discoverBooks} disabled={loading}>
             {loading ? "Finding books..." : "Discover books"}
           </button>
         </div>
@@ -93,9 +100,7 @@ function App() {
         <section className="loading-section">
           <div className="spinner" />
           <h2>Finding your books...</h2>
-          <p>
-            BookWise is searching and reranking the best matches for you.
-          </p>
+          <p>BookWise is searching and reranking the best matches for you.</p>
         </section>
       )}
 
@@ -107,19 +112,44 @@ function App() {
           </div>
 
           <div className="book-grid">
-            {recommendations.map((book, index) => (
-              <article className="book-card" key={book.id}>
-                <div className="rank">#{index + 1}</div>
+            {recommendations.map((book, index) => {
+              const coverUrl = getCoverUrl(book.cover_id);
 
-                <h3>{book.title}</h3>
+              return (
+                <article className="book-card" key={book.id}>
+                  <div className="book-cover">
+                    {coverUrl ? (
+                      <img src={coverUrl} alt={`Cover of ${book.title}`} />
+                    ) : (
+                      <div className="cover-placeholder">No cover</div>
+                    )}
+                  </div>
 
-                <div className="match">
-                  {Math.round(book.score * 100)}% match
-                </div>
+                  <div className="book-content">
+                    <div className="rank">#{index + 1}</div>
 
-                <p>{book.reason}</p>
-              </article>
-            ))}
+                    <h3>{book.title}</h3>
+
+                    {book.authors.length > 0 && (
+                      <p className="authors">{book.authors.join(", ")}</p>
+                    )}
+
+                    <div className="match">
+                      {Math.round(book.score * 100)}% AI match
+                    </div>
+
+                    {book.description && (
+                      <p className="description">{book.description}</p>
+                    )}
+
+                    <div className="why">
+                      <strong>Why BookWise recommends it</strong>
+                      <p>{book.reason}</p>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
           </div>
         </section>
       )}
