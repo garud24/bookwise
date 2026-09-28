@@ -143,3 +143,38 @@ async def enrich_and_embed_book(
         db,
         open_library_id
     )      
+
+async def ingest_and_process_books(
+    db: Session,
+    query: str,
+    limit: int = 20
+) -> list[Book]:
+
+    books = await ingest_search_results(
+        db,
+        query,
+        limit
+    )
+
+    processed_books = []
+
+    for book in books:
+        try:
+            
+            processed_book = await enrich_and_embed_book(
+                db,
+                book.open_library_id
+            )
+
+            if processed_book:
+                processed_books.append(processed_book)
+        except Exception as exc:
+            db.rollback()
+            print(
+                f"Failed to process "
+                f"{book.open_library_id} "
+                f"({book.title}): {exc}"
+            )
+                    
+
+    return processed_books    
