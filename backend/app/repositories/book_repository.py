@@ -41,3 +41,16 @@ def update_book_metadata(
     db.refresh(book)
 
     return book
+
+def update_book_embedding(
+    db: Session,
+    book: Book,
+    embedding: list[float]
+) -> Book:
+
+    book.embedding = embedding
+
+    db.commit()
+    db.refresh(book)
+
+    return book
