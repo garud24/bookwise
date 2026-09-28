@@ -2,7 +2,7 @@ from sqlalchemy import Integer, String, Text
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import Mapped, mapped_column
 from app.db.database import Base
-
+from pgvector.sqlalchemy import Vector
 
 class Book(Base):
     __tablename__ = "books"
@@ -47,5 +47,10 @@ class Book(Base):
     cover_id: Mapped[int | None] = mapped_column(
         Integer,
         nullable=True
+    )
+    
+    embedding: Mapped[list[float] | None] = mapped_column(
+    Vector(768),
+    nullable=True
     )
     
