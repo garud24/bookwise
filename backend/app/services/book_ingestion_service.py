@@ -6,7 +6,17 @@ from app.repositories.book_repository import (
     get_book_by_open_library_id,
     save_book,
 )
-from app.services.book_service import search_open_library
+from app.repositories.book_repository import (
+    get_book_by_open_library_id,
+    save_book,
+    update_book_metadata,
+)
+
+from app.services.book_service import (
+    search_open_library,
+    get_open_library_work,
+    extract_description,
+)
 
 def ingest_book(
     db: Session,
@@ -55,4 +65,31 @@ async def ingest_search_results(
         saved_books.append(saved_book)
 
     return saved_books
-    
+
+async def enrich_book(
+    db: Session,
+    open_library_id: str
+) -> Book | None:
+
+    book = get_book_by_open_library_id(
+        db,
+        open_library_id
+    )
+
+    if not book:
+        return None
+
+    work = await get_open_library_work(
+        open_library_id
+    )
+
+    description = extract_description(work)
+
+    subjects = work.get("subjects", [])
+
+    return update_book_metadata(
+        db,
+        book,
+        description,
+        subjects
+    )    

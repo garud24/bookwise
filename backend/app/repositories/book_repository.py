@@ -26,3 +26,18 @@ def save_book(
     db.refresh(book)
 
     return book
+
+def update_book_metadata(
+    db: Session,
+    book: Book,
+    description: str | None,
+    subjects: list[str]
+) -> Book:
+
+    book.description = description
+    book.subjects = subjects
+
+    db.commit()
+    db.refresh(book)
+
+    return book

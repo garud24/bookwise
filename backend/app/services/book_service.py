@@ -63,3 +63,46 @@ def transform_book(book: dict):
         first_publish_year=book.get("first_publish_year"),
         cover_id=book.get("cover_i")
         )
+
+async def get_open_library_work(open_library_id: str):
+    url = f"https://openlibrary.org/works/{open_library_id}.json"
+
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                url,
+                timeout=10.0
+            )
+
+        response.raise_for_status()
+
+    except httpx.TimeoutException:
+        raise HTTPException(
+            status_code=504,
+            detail="Open Library work request timed out."
+        )
+
+    except httpx.HTTPStatusError:
+        raise HTTPException(
+            status_code=502,
+            detail="Open Library returned an error."
+        )
+
+    except httpx.RequestError:
+        raise HTTPException(
+            status_code=503,
+            detail="Unable to connect to Open Library."
+        )
+
+    return response.json()    
+
+def extract_description(work: dict) -> str | None:
+    description = work.get("description")
+
+    if isinstance(description, str):
+        return description
+
+    if isinstance(description, dict):
+        return description.get("value")
+
+    return None
