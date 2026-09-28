@@ -1,0 +1,186 @@
+#root {
+  width: 100%;
+}
+
+.app {
+  min-height: 100vh;
+}
+
+.hero {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 90px 24px 50px;
+  text-align: center;
+}
+
+.brand {
+  margin-bottom: 45px;
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: clamp(2.8rem, 7vw, 5.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.06em;
+}
+
+.subtitle {
+  max-width: 600px;
+  margin: 28px auto 38px;
+  color: #666;
+  font-size: 1.1rem;
+  line-height: 1.7;
+}
+
+.search-box {
+  padding: 10px;
+  background: white;
+  border: 1px solid #dedede;
+  border-radius: 18px;
+  box-shadow: 0 14px 45px rgba(0, 0, 0, 0.08);
+}
+
+.search-box textarea {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 18px;
+  resize: none;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #171717;
+  font: inherit;
+  font-size: 1.05rem;
+}
+
+.search-box button {
+  width: 100%;
+  padding: 15px 24px;
+  border: none;
+  border-radius: 12px;
+  background: #171717;
+  color: white;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}
+
+.search-box button:hover {
+  opacity: 0.88;
+}
+
+.search-box button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.error {
+  margin-top: 18px;
+  color: #b42318;
+}
+
+.loading-section {
+  padding: 45px 24px;
+  text-align: center;
+}
+
+.spinner {
+  width: 30px;
+  height: 30px;
+  margin: 0 auto 20px;
+  border: 3px solid #ddd;
+  border-top-color: #171717;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.loading-section h2 {
+  margin-bottom: 8px;
+}
+
+.loading-section p {
+  color: #777;
+}
+
+.results {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 30px 24px 90px;
+}
+
+.results-header {
+  margin-bottom: 25px;
+}
+
+.eyebrow {
+  margin-bottom: 6px;
+  color: #777;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.results-header h2 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.book-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+.book-card {
+  position: relative;
+  padding: 28px;
+  border: 1px solid #e5e5e5;
+  border-radius: 18px;
+  background: white;
+}
+
+.book-card h3 {
+  margin: 12px 0;
+  font-size: 1.35rem;
+}
+
+.book-card p {
+  margin-bottom: 0;
+  color: #666;
+  line-height: 1.6;
+}
+
+.rank {
+  color: #999;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.match {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #f1f1f1;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 700px) {
+  .hero {
+    padding-top: 50px;
+  }
+
+  .book-grid {
+    grid-template-columns: 1fr;
+  }
+}
