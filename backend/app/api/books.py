@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from app.schemas.search import BookSearchRequest, BookSearchResponse, SemanticSearchResponse
+from app.schemas.search import BookSearchRequest, BookSearchResponse, SemanticSearchResponse, BatchIngestionResponse
 from app.services.book_service import search_open_library
 from app.db.database import get_db
 from app.services.semantic_search_service import semantic_search
+from app.services.book_ingestion_service import ingest_and_process_books
 
 router = APIRouter()
 
@@ -30,3 +31,17 @@ async def search_books_semantically(
         request.query,
         request.max_results
     )
+
+@router.post(
+    "/ingest",
+    response_model=BatchIngestionResponse
+)
+async def ingest_books(
+    request: BookSearchRequest,
+    db: Session = Depends(get_db)
+):
+    return await ingest_and_process_books(
+        db,
+        request.query,
+        request.max_results
+    )    

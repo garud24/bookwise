@@ -25,6 +25,11 @@ from app.services.embedding_service import (
 
 from app.repositories.book_repository import update_book_embedding
 
+from app.schemas.search import (
+    BatchFailure,
+    BatchIngestionResponse,
+)
+
 def ingest_book(
     db: Session,
     book_response: BookResponse
@@ -148,7 +153,7 @@ async def ingest_and_process_books(
     db: Session,
     query: str,
     limit: int = 20
-) -> list[Book]:
+) -> BatchIngestionResponse:
 
     books = await ingest_search_results(
         db,
@@ -156,7 +161,8 @@ async def ingest_and_process_books(
         limit
     )
 
-    processed_books = []
+    processed_count = 0
+    failures = []
 
     for book in books:
         try:
@@ -167,14 +173,23 @@ async def ingest_and_process_books(
             )
 
             if processed_book:
-                processed_books.append(processed_book)
+                processed_count += 1
         except Exception as exc:
             db.rollback()
-            print(
-                f"Failed to process "
-                f"{book.open_library_id} "
-                f"({book.title}): {exc}"
+            failures.append(
+                BatchFailure(
+                    open_library_id=book.open_library_id,
+                    title=book.title,
+                    error=str(exc)
+                )
             )
                     
 
-    return processed_books    
+    return BatchIngestionResponse(
+        query=query,
+        requested=limit,
+        found=len(books),
+        processed=processed_count,
+        failed=len(failures),
+        failures=failures
+    )  

@@ -21,4 +21,18 @@ class SemanticSearchResult(BaseModel):
 
 class SemanticSearchResponse(BaseModel):
     query: str
-    results: list[SemanticSearchResult]    
+    results: list[SemanticSearchResult] 
+
+class BatchFailure(BaseModel):
+    open_library_id: str
+    title: str
+    error: str
+
+
+class BatchIngestionResponse(BaseModel):
+    query: str
+    requested: int
+    found: int
+    processed: int
+    failed: int
+    failures: list[BatchFailure]       
