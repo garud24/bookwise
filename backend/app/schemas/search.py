@@ -9,3 +9,16 @@ class BookSearchResponse(BaseModel):
     query: str
     total_found: int
     books: list[BookResponse]   
+
+class SemanticSearchResult(BaseModel):
+    id: str
+    title: str
+    authors: list[str]
+    description: str | None = None
+    subjects: list[str]
+    distance: float
+
+
+class SemanticSearchResponse(BaseModel):
+    query: str
+    results: list[SemanticSearchResult]    
