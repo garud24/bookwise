@@ -18,6 +18,13 @@ from app.services.book_service import (
     extract_description,
 )
 
+from app.services.embedding_service import (
+    build_book_embedding_text,
+    generate_embedding,
+)
+
+from app.repositories.book_repository import update_book_embedding
+
 def ingest_book(
     db: Session,
     book_response: BookResponse
@@ -92,4 +99,47 @@ async def enrich_book(
         book,
         description,
         subjects
-    )    
+    )  
+
+async def embed_book(
+    db: Session,
+    open_library_id: str
+) -> Book | None:
+
+    book = get_book_by_open_library_id(
+        db,
+        open_library_id
+    )
+
+    if not book:
+        return None
+
+    embedding_text = build_book_embedding_text(book)
+
+    embedding = await generate_embedding(
+        embedding_text
+    )
+
+    return update_book_embedding(
+        db,
+        book,
+        embedding
+    )
+
+async def enrich_and_embed_book(
+    db: Session,
+    open_library_id: str
+) -> Book | None:
+
+    book = await enrich_book(
+        db,
+        open_library_id
+    )
+
+    if not book:
+        return None
+
+    return await embed_book(
+        db,
+        open_library_id
+    )      

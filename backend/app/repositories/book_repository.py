@@ -54,3 +54,23 @@ def update_book_embedding(
     db.refresh(book)
 
     return book
+
+def search_books_by_embedding(
+    db: Session,
+    query_embedding: list[float],
+    limit: int = 5
+):
+    distance = Book.embedding.cosine_distance(
+        query_embedding
+    ).label("distance")
+
+    return (
+        db.query(
+            Book,
+            distance
+        )
+        .filter(Book.embedding.is_not(None))
+        .order_by(distance)
+        .limit(limit)
+        .all()
+    )
